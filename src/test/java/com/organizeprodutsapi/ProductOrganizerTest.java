@@ -1,5 +1,6 @@
 package com.organizeprodutsapi;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -7,12 +8,22 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.organizeprodutsapi.product.Product;
+import com.organizeprodutsapi.repositories.ProductOrganizerRepository;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class ProductOrganizerTest {
 	
-	private List<Product> products;
+	private List<Product> products = new ArrayList<Product>();
+	
+	@Autowired
+	private ProductOrganizerRepository repository;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -28,7 +39,6 @@ public class ProductOrganizerTest {
 		Product product8 = new Product("u7043","7898100848356","Sony Playstation","redav",1400.00,0L);
 		Product product9 = new Product("u7044","7898100848357","Controle XBOX One","redav",220.00,20L);
 		
-		List<Product> products = new ArrayList<>();
 		products.add(product1);
 		products.add(product2);
 		products.add(product3);
@@ -38,6 +48,20 @@ public class ProductOrganizerTest {
 		products.add(product7);
 		products.add(product8);
 		products.add(product9);
+	}
+	
+	/**
+	 * Test if repository is persisting all the products given by a list.
+	 */
+	@Test
+	public void testPersistProductsList() {
+		for (Product product : products) {
+			repository.save(product);
+		}
+		
+		List<Product> savedProducts = repository.findAll();
+		
+		assertEquals(9, savedProducts.size());
 	}
 
 	@Test
@@ -67,6 +91,11 @@ public class ProductOrganizerTest {
 	
 	@Test
 	public void testOrderDefault() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testOrganize() {
 		fail("Not yet implemented");
 	}
 

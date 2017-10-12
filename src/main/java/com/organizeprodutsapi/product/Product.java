@@ -1,17 +1,32 @@
 package com.organizeprodutsapi.product;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
- * Product type carries product information. 
+ * Product carries product information. 
  * @author Danilo
  *
  */
+@Entity
+@Table(name="product")
 public class Product {
 	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private String id;
+	
 	private String ean;
+	
 	private String title;
+	
 	private String brand;
+	
 	private Double price;
+	
 	private Long stock;
 	
 	public Product() {
