@@ -1,8 +1,9 @@
 package com.organizeprodutsapi.product;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,7 +17,6 @@ import javax.persistence.Table;
 public class Product {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	private String id;
 	
 	private String ean;
@@ -80,5 +80,23 @@ public class Product {
 	public void setStock(Long stock) {
 		this.stock = stock;
 	}
+
+	@Override
+	public String toString() {
+		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("pt","BR"));
+		NumberFormat numberFormatter = NumberFormat.getNumberInstance(new Locale("pt","BR"));
+		
+		StringBuffer productForm = new StringBuffer();
+		productForm.append("\nID: " + id + "\n");
+		productForm.append("EAN: " + ean + "\n");
+		productForm.append("Title: " + title + "\n");
+		productForm.append("Brand: " + brand + "\n");
+		productForm.append("Price: " + currencyFormatter.format(price) + "\n");
+		productForm.append("Stock: " + numberFormatter.format(stock) + "\n\n");
+		
+		return productForm.toString();
+	}
+	
+	
 
 }
