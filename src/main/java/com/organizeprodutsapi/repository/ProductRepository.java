@@ -1,4 +1,4 @@
-package com.organizeprodutsapi.repositories;
+package com.organizeprodutsapi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;

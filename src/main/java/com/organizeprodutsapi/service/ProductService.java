@@ -1,4 +1,4 @@
-package com.organizeprodutsapi.services;
+package com.organizeprodutsapi.service;
 
 import java.util.List;
 

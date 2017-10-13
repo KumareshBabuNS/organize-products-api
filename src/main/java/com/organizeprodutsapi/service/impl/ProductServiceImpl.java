@@ -1,4 +1,4 @@
-package com.organizeprodutsapi.services.impl;
+package com.organizeprodutsapi.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,22 +8,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.organizeprodutsapi.product.Product;
-import com.organizeprodutsapi.repositories.ProductRepository;
+import com.organizeprodutsapi.repository.ProductRepository;
 import com.organizeprodutsapi.result.GroupResult;
-import com.organizeprodutsapi.services.ProductService;
+import com.organizeprodutsapi.service.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 	
 	private static final String[] PRODUCT_FIELDS = {"id","ean","title","brand","price","stock"};
 	private static final String DEFAULT_QUERY_ORDER = "order by stock desc, price asc";
-	private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
+	//private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 	
 	@PersistenceContext
     private EntityManager entityManager;
