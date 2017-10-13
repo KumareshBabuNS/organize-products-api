@@ -14,6 +14,10 @@ public class GroupResult {
 	private String description;	
 	private List<Product> items;
 	
+	public GroupResult(String description) {
+		super();
+		this.description = description;
+	}
 	public String getDescription() {
 		return description;
 	}

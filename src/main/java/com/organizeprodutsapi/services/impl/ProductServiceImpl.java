@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.organizeprodutsapi.product.Product;
 import com.organizeprodutsapi.repositories.ProductRepository;
+import com.organizeprodutsapi.result.GroupResult;
 import com.organizeprodutsapi.services.ProductService;
 
 @Service
@@ -30,38 +31,95 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductRepository repository;
 	
+	/**
+	 * This method organizes a list of products according to the filter and order specified.
+	 * @param unorganizedProducts The unorganized list of products to be organized.
+	 * @param filter The filter to be applied to the unorganized list of products.
+	 * @param order The order to be applied to the unorganized list of products.
+	 * @return The list of products organized according to the filter and order. 
+	 * If no order is specified, the default order is applied: order by stock desc, price asc
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Product> organize(List<Product> unorganizedProducts, String filter, String order) {
-		List<Product> organizedProducts = new ArrayList<Product>();
+	public List<GroupResult> organize(List<Product> unorganizedProducts, String filter, String order) {
+		List<GroupResult> groupResults = new ArrayList<GroupResult>();
+		
+		repository.deleteAll();
 		
 		if (unorganizedProducts != null) {
 			for (Product product : unorganizedProducts) {
 				repository.save(product);
 			}
-		
-			String queryString = prepareQuery(filter, order);
 			
-			log.info(queryString);
+			//Create query to return distinct description to organize description groups
+			String descriptionQueryString = prepareQuery(filter, order, "title", null);
 			
-			Query query = entityManager.createQuery(queryString);
+			Query descriptionQuery = entityManager.createQuery(descriptionQueryString);
+			List<String> descriptions = descriptionQuery.getResultList();
 			
-			organizedProducts = query.getResultList();
+			for (String description : descriptions) {
+				GroupResult groupResult = new GroupResult(description);
+				
+				//Create query to return the list of products filtered and ordered
+				String descriptionFilterQueryString = prepareQuery(filter, order, null, "and title = '" + description + "'");
+				
+				Query descriptionFilterQuery = entityManager.createQuery(descriptionFilterQueryString);
+				
+				//Set filtered items to the group
+				groupResult.setItems(descriptionFilterQuery.getResultList());
+				
+				//Add group to the list of groups
+				groupResults.add(groupResult);
+			}
+			
+			//Create query to return distinct brand to organize brand groups
+			String brandQueryString = prepareQuery(filter, order, "brand", null);
+			
+			Query brandQuery = entityManager.createQuery(brandQueryString);
+			List<String> brands = brandQuery.getResultList();
+			
+			for (String brand : brands) {
+				GroupResult groupResult = new GroupResult(brand);
+				
+				//Create query to return the list of products filtered and ordered
+				String brandFilterQueryString = prepareQuery(filter, order, null, "and brand = '" + brand + "'");
+				
+				Query brandFilterQuery = entityManager.createQuery(brandFilterQueryString);
+				
+				//Set filtered items to the group
+				groupResult.setItems(brandFilterQuery.getResultList());
+				
+				//Add group to the list of groups
+				groupResults.add(groupResult);
+			}
 			
 			repository.deleteAll();
 		}
 		
-		return organizedProducts;
+		return groupResults;
 	}
-
-	/*@Override
-	public Product findById(String id) {
-		return repository.findById(id);
-	}*/
 	
-	public String prepareQuery(String filter, String order) {
+	/**
+	 * This method creates the JQL statement to filter and order a product list.
+	 * @param filter The filter field and the value to be applied to the filter e.g.: brand:nikana.
+	 * This example results in a where clause: where brand = 'nikana'. 
+	 * @param order The order field and the type of order, asc or desc e.g: title:asc.
+	 * This example results in an order by clause: order by title asc.
+	 * @param distinctField The distinct field, if specified, changes the select clause to return distinct values of the specified field.
+	 * @param extraAndClause The extraAndClause, if specified, adds an and clause to the query.
+	 * @return The JQL statement.
+	 */
+	private String prepareQuery(String filter, String order, String distinctField, String extraAndClause) {
 		
 		StringBuffer query = new StringBuffer(); 
-		query.append("select prod from Product prod ");
+		
+		if (distinctField != null && !distinctField.isEmpty()) {
+			query.append("select distinct prod." + distinctField + " from Product prod ");
+		} else {
+			query.append("select prod from Product prod ");
+		}
+		
+		query.append("where 0 = 0");
 		
 		if (filter != null && !filter.isEmpty()) {
 			String filterStatement = "";
@@ -86,7 +144,7 @@ public class ProductServiceImpl implements ProductService {
 				
 				//Even if filter field is a valid field, field value can be empty. In this case the filter wont be applied.
 				if (!filterValue.isEmpty()) {
-					filterStatement = "where " + filterField + " = " + filterValue;
+					filterStatement = "and " + filterField + " = " + filterValue;
 				}
 				
 				query.append(filterStatement);
@@ -95,7 +153,13 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 		
-		if (order == null || order.isEmpty()) {
+		if (extraAndClause != null) {
+			query.append(extraAndClause);
+		}
+		
+		if (distinctField != null) {
+			query.append("order by prod." + distinctField);
+		} else if (order == null || order.isEmpty()) {
 			query.append(DEFAULT_QUERY_ORDER);
 		} else {
 			//Split order parameter expecting that rawOrder[0] becomes the order field 
@@ -127,6 +191,11 @@ public class ProductServiceImpl implements ProductService {
 		return query.toString();
 	}
 	
+	/**
+	 * This method validates if filterOrder parameter corresponds to a Product's field.
+	 * @param filterOrderField must be one value that is in the array PRODUCT_FIELDS.
+	 * @return true if filterOrder is one Product's field and false if not.
+	 */
 	public boolean validateFilterOrderField(String filterOrderField) {
 		return Arrays.asList(PRODUCT_FIELDS).contains(filterOrderField.toLowerCase());
 	}
