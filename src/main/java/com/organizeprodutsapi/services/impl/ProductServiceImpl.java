@@ -30,16 +30,6 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductRepository repository;
 	
-	/*@Override
-	public List<Product> findAll() {
-		return repository.findAll();
-	}*/
-	
-	/*@Override
-	public Product save(Product product) {
-		return repository.save(product);
-	}*/
-	
 	@Override
 	public List<Product> organize(List<Product> unorganizedProducts, String filter, String order) {
 		List<Product> organizedProducts = new ArrayList<Product>();
@@ -137,11 +127,6 @@ public class ProductServiceImpl implements ProductService {
 		return query.toString();
 	}
 	
-	/**
-	 * This method validates if filterOrder parameter corresponds to a Product's field.
-	 * @param filterOrderField must be one value that is in the array PRODUCT_FIELDS.
-	 * @return true if filterOrder is one Product's field and false if not.
-	 */
 	public boolean validateFilterOrderField(String filterOrderField) {
 		return Arrays.asList(PRODUCT_FIELDS).contains(filterOrderField.toLowerCase());
 	}
