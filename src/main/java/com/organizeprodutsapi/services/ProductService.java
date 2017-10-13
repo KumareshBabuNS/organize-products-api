@@ -6,16 +6,8 @@ import com.organizeprodutsapi.product.Product;
 
 public interface ProductService {
 	
-	List<Product> findAll();
-	
-	List<Product> filterAndOrderDefault();
+	List<Product> organize(List<Product> unorganizedProducts, String filter, String order);
 
-	Product save(Product product);
-
-	Product findById(String string);
-
-	void delete(String string);
-	
 	String prepareQuery(String filter, String order);
 	
 	boolean validateFilterOrderField(String filterOrderField);

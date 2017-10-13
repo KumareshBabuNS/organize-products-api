@@ -56,7 +56,7 @@ public class ProductRepositoryTest {
 	}
 	
 	/**
-	 * Clear repository
+	 * Clear repository after tests.
 	 * @throws Exception
 	 */
 	@After

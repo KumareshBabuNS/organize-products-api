@@ -2,13 +2,12 @@ package com.organizeprodutsapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.organizeprodutsapi.product.Product;
+import com.organizeprodutsapi.repositories.ProductRepository;
 import com.organizeprodutsapi.services.ProductService;
 
 @RunWith(SpringRunner.class)
@@ -28,6 +28,9 @@ public class ProductServiceTest {
 	@Autowired
 	private ProductService service;
 	
+	@Autowired
+	private ProductRepository repository;
+	
 	@Before
 	public void setUp() throws Exception {
 		Product product1 = new Product("123","7898100848355","XBOX One","nikana",1300.00,30L);
@@ -36,7 +39,7 @@ public class ProductServiceTest {
 		
 		Product product4 = new Product("7728uu","7898100848355","XBOX One","trek",1400.00,1L);
 		Product product5 = new Product("7729uu","7898100848356","Sony Playstation","trek",1600.00,3L);
-		Product product6 = new Product("7730uu","7898100848357","Controle XBOX One","trek",260.00,10L);
+		Product product6 = new Product("7730uu","7898100848357","Controle XBOX One","trek",260.00,0L);
 		
 		Product product7 = new Product("u7042","7898100848355","XBOX One","redav",1200.00,4L);
 		Product product8 = new Product("u7043","7898100848356","Sony Playstation","redav",1400.00,0L);
@@ -53,24 +56,23 @@ public class ProductServiceTest {
 		products.add(product9);
 		
 		for (Product product : products) {
-			service.save(product);
+			repository.save(product);
 		}
 	}
 	
 	/**
-	 * Test if service is persisting all the products given by a list.
+	 * Clear repository after tests.
+	 * @throws Exception
 	 */
-	@Test
-	public void testServiceFindAll() {
-		List<Product> savedProducts = service.findAll();
-		
-		assertEquals(9, savedProducts.size());
+	@After
+	public void tearDown() throws Exception {
+		repository.deleteAll();
 	}
 	
 	/**
 	 * Test if service can save and delete a product.
 	 */
-	@Test
+	/*@Test
 	public void testServiceSaveAndDelete() {
 		Product productToSave = new Product("111222333","7898100848355","XBOX One","redav",1200.00,4L);
 		service.save(productToSave);
@@ -82,7 +84,7 @@ public class ProductServiceTest {
 		Product deletedProduct = service.findById("111222333");
 		
 		assertNull(deletedProduct);
-	}
+	}*/
 	
 	/**
 	 * Test query build with no filter
@@ -111,7 +113,7 @@ public class ProductServiceTest {
 	 */
 	@Test
 	public void testServicePrepareQueryWithStringFilterAndOrder() {
-		String expectedQuery = "select prod from Product prod where brand = \"nikana\" order by price desc"; 
+		String expectedQuery = "select prod from Product prod where brand = 'nikana' order by price desc"; 
 		String obteinedQuery = service.prepareQuery("brand:nikana", "price:desc");
 		
 		assertEquals(expectedQuery,obteinedQuery);
@@ -144,10 +146,72 @@ public class ProductServiceTest {
 		service.prepareQuery("stock:0", "abc:asc");
 	}
 	
+	/**
+	 * Test field validation
+	 */
 	@Test
-	public void validateFilterOrderField() {
+	public void testServiceValidateFilterOrderField() {
 		assertTrue(service.validateFilterOrderField("title"));
 		assertFalse(service.validateFilterOrderField("seller"));
+	}
+	
+	/**
+	 * Test organize behavior with no filter and no order.
+	 * This behavior must result in a default order and no filter.
+	 */
+	@Test
+	public void testServiceOrganizeNoFilterNoOrder() {
+		repository.deleteAll();
+		
+		List<Product> organizedProducts = service.organize(products, null, null);
+		
+		assertEquals("456", organizedProducts.get(0).getId());
+		assertEquals("u7043", organizedProducts.get(8).getId());
+		assertEquals(9, organizedProducts.size());
+		
+	}
+	
+	/**
+	 * Test organize behavior with no filter.
+	 */
+	@Test
+	public void testServiceOrganizeNoFilter() {
+		repository.deleteAll();
+		
+		List<Product> organizedProducts = service.organize(products, null, "price:asc");
+		
+		assertEquals("u7044", organizedProducts.get(0).getId());
+		assertEquals("7729uu", organizedProducts.get(8).getId());
+		assertEquals(9, organizedProducts.size());
+		
+	}
+	
+	/**
+	 * Test organize behavior with no order.
+	 */
+	@Test
+	public void testServiceOrganizeNoOrder() {
+		repository.deleteAll();
+		
+		List<Product> organizedProducts = service.organize(products, "title:XBOX One", null);
+		
+		assertEquals("123", organizedProducts.get(0).getId());
+		assertEquals("7728uu", organizedProducts.get(2).getId());
+		assertEquals(3, organizedProducts.size());		
+	}
+	
+	/**
+	 * Test organize behavior with filter and order.
+	 */
+	@Test
+	public void testServiceOrganizeFilterAndOrder() {
+		repository.deleteAll();
+		
+		List<Product> organizedProducts = service.organize(products, "ean:7898100848356", "brand:desc");
+		
+		assertEquals("7729uu", organizedProducts.get(0).getId());
+		assertEquals("456", organizedProducts.get(2).getId());
+		assertEquals(3, organizedProducts.size());		
 	}
 
 }

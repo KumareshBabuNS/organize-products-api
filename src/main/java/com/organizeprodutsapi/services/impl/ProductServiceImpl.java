@@ -1,8 +1,15 @@
 package com.organizeprodutsapi.services.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,36 +22,51 @@ public class ProductServiceImpl implements ProductService {
 	
 	private static final String[] PRODUCT_FIELDS = {"id","ean","title","brand","price","stock"};
 	private static final String DEFAULT_QUERY_ORDER = "order by stock desc, price asc";
-
+	private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
+	
+	@PersistenceContext
+    private EntityManager entityManager;
+	
 	@Autowired
 	private ProductRepository repository;
 	
-	@Override
+	/*@Override
 	public List<Product> findAll() {
 		return repository.findAll();
-	}
+	}*/
 	
-	@Override
+	/*@Override
 	public Product save(Product product) {
 		return repository.save(product);
-	}
+	}*/
 	
 	@Override
-	public List<Product> filterAndOrderDefault() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Product> organize(List<Product> unorganizedProducts, String filter, String order) {
+		List<Product> organizedProducts = new ArrayList<Product>();
+		
+		if (unorganizedProducts != null) {
+			for (Product product : unorganizedProducts) {
+				repository.save(product);
+			}
+		
+			String queryString = prepareQuery(filter, order);
+			
+			log.info(queryString);
+			
+			Query query = entityManager.createQuery(queryString);
+			
+			organizedProducts = query.getResultList();
+			
+			repository.deleteAll();
+		}
+		
+		return organizedProducts;
 	}
 
-	@Override
+	/*@Override
 	public Product findById(String id) {
 		return repository.findById(id);
-	}
-
-	@Override
-	public void delete(String id) {
-		repository.delete(id);
-		
-	}
+	}*/
 	
 	public String prepareQuery(String filter, String order) {
 		
@@ -68,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
 					if (filterField.equals("price") || filterField.equals("stock")) {
 						filterValue = rawFilter[1] + " ";
 					} else {
-						filterValue = "\"" + rawFilter[1]+"\" ";
+						filterValue = "'" + rawFilter[1]+"' ";
 					}					
 				}
 				
