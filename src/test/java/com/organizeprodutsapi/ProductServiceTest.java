@@ -70,23 +70,6 @@ public class ProductServiceTest {
 	}
 	
 	/**
-	 * Test if service can save and delete a product.
-	 */
-	/*@Test
-	public void testServiceSaveAndDelete() {
-		Product productToSave = new Product("111222333","7898100848355","XBOX One","redav",1200.00,4L);
-		service.save(productToSave);
-		Product savedProduct = service.findById("111222333");
-		
-		assertNotNull(savedProduct);
-		
-		service.delete("111222333");
-		Product deletedProduct = service.findById("111222333");
-		
-		assertNull(deletedProduct);
-	}*/
-	
-	/**
 	 * Test query build with no filter
 	 */
 	@Test
