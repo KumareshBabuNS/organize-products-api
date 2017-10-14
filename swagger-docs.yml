@@ -1,0 +1,73 @@
+swagger: "2.0"
+info:
+  description: "This API organizes a product list according to the filter and order parameters."
+  version: "1.0"
+  title: "Organize Products API"
+  contact:
+    email: "dadonas@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "ancient-gorge-51255.herokuapp.com"
+basePath: "/organize-products-api"
+schemes:
+- "https"
+paths:
+  /v1/products/organize:
+    post:
+      tags:
+      - "products"
+      operationId: "organize"
+      summary: "Organize products"
+      description: ""
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "filter"
+        in: "query"
+        type: "string"
+        description: "Filter to apply to the given list. The format must be field:value. <br>**e.g. ean:7898100848355**"
+      - name: "order_by"
+        in: "query"
+        type: "string"
+        description: "Order to apply to the given list. The format must be field:asc|desc. <br>**e.g. price:asc**"
+      - name: "body"
+        in: "body"
+        description: "An unorganized list of products."
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Product"
+      responses:
+        405:
+          description: "Invalid input"
+        200:
+          description: "An organized list of products."
+          schema:
+            $ref: "#/definitions/ApiResult"
+definitions:
+  Product:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      ean:
+        type: "string"
+      title:
+        type: "string"
+      brand:
+        type: "string"
+      price: 
+        type: "number"
+      stock:
+        type: "integer"
+  ApiResult:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+           $ref: "#/definitions/Product"
