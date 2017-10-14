@@ -16,14 +16,14 @@ import com.organizeprodutsapi.dto.ProductDto;
 import com.organizeprodutsapi.product.Product;
 import com.organizeprodutsapi.service.ProductService;
 
-@Path("products")
+@Path("organize-products-api")
 public class ProductResource {
 	
 	@Autowired
 	private ProductService service;
 	
 	@POST
-	@Path("organize")
+	@Path("v1/products/organize")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)	
 	public ProductDto organizeProducts(List<Product> products, @QueryParam("filter") String filter, @QueryParam("order_by") String orderBy) {

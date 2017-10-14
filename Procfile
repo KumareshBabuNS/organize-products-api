@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -jar target/organize-products-api-1.0.jar
