@@ -2,8 +2,6 @@ package com.organizeprodutsapi.dto;
 
 import java.util.List;
 
-import com.organizeprodutsapi.result.GroupResult;
-
 /**
  * The object of this type transports the information in a format according to the domain requirements.
  * @author Danilo
@@ -12,6 +10,14 @@ import com.organizeprodutsapi.result.GroupResult;
 public class ProductDto {
 	
 	private List<GroupResult> data;
+	
+	public ProductDto() {
+		super();
+	}
+	
+	public ProductDto(List<GroupResult> groupResult) {
+		this.data = groupResult;
+	}
 
 	public List<GroupResult> getData() {
 		return data;

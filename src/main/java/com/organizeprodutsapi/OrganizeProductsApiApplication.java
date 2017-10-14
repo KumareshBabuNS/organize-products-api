@@ -1,12 +1,14 @@
 package com.organizeprodutsapi;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class OrganizeProductsApiApplication {
+public class OrganizeProductsApiApplication extends SpringBootServletInitializer{
 
 	public static void main(String[] args) {
-		SpringApplication.run(OrganizeProductsApiApplication.class, args);
+		new OrganizeProductsApiApplication().configure(new SpringApplicationBuilder(OrganizeProductsApiApplication.class)).run(args);
+		//SpringApplication.run(OrganizeProductsApiApplication.class, args);
 	}
 }

@@ -11,9 +11,9 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.organizeprodutsapi.dto.GroupResult;
 import com.organizeprodutsapi.product.Product;
 import com.organizeprodutsapi.repository.ProductRepository;
-import com.organizeprodutsapi.result.GroupResult;
 import com.organizeprodutsapi.service.ProductService;
 
 @Service

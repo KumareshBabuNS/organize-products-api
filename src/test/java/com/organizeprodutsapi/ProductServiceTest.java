@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.organizeprodutsapi.dto.GroupResult;
 import com.organizeprodutsapi.product.Product;
 import com.organizeprodutsapi.repository.ProductRepository;
-import com.organizeprodutsapi.result.GroupResult;
 import com.organizeprodutsapi.service.ProductService;
 
 @RunWith(SpringRunner.class)

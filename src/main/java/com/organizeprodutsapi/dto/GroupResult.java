@@ -1,4 +1,4 @@
-package com.organizeprodutsapi.result;
+package com.organizeprodutsapi.dto;
 
 import java.util.List;
 

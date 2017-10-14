@@ -2,8 +2,8 @@ package com.organizeprodutsapi.service;
 
 import java.util.List;
 
+import com.organizeprodutsapi.dto.GroupResult;
 import com.organizeprodutsapi.product.Product;
-import com.organizeprodutsapi.result.GroupResult;
 
 /**
  * This class does the core work to organize the product list.
