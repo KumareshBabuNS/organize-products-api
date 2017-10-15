@@ -27,7 +27,7 @@ Access the endpoint through this URL:
 **Params**
 
 * `filter`: Filter to apply to the given list. The format must be field:value. <br>
-   Example: `filter=ean:7898100848355`
+   Example: `filter=title:Controle XBOX One`
    
 * `order_by`: Order to apply to the given list. The format must be field:asc|desc. <br>
    Example: `order_by=price:asc`
