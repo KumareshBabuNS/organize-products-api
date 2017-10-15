@@ -8,6 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,12 +28,16 @@ public class ProductResource {
 	@Path("v1/products/organize")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)	
-	public ProductDto organizeProducts(List<Product> products, @QueryParam("filter") String filter, @QueryParam("order_by") String orderBy) {
+	public Response organizeProducts(List<Product> products, @QueryParam("filter") String filter, @QueryParam("order_by") String orderBy) {
+		if (!service.validateFields(new String[] {filter,orderBy})) {
+			return Response.status(Status.BAD_REQUEST).entity("").build();
+		}
+		
 		List<GroupResult> groupResult = service.organize(products, filter, orderBy);
 		
 		ProductDto productDto = new ProductDto(groupResult);
 		
-		return productDto;
+		return Response.ok().entity(productDto).build();
 	}
 
 }

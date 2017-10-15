@@ -5,6 +5,11 @@ import org.springframework.stereotype.Component;
 
 import com.organizeprodutsapi.resource.ProductResource;
 
+/**
+ * Jersey configuration class
+ * @author Danilo
+ *
+ */
 @Component
 public class JerseyConfig extends ResourceConfig{
 	

@@ -37,7 +37,7 @@ public class ProductRepositoryImpl implements ProductCustomRepository {
 			query.append("select prod from Product prod ");
 		}
 		
-		query.append("where 0 = 0");
+		query.append(" where 0 = 0 ");
 		
 		if (filter != null && !filter.isEmpty()) {
 			String filterStatement = "";
@@ -48,7 +48,7 @@ public class ProductRepositoryImpl implements ProductCustomRepository {
 			String filterField = rawFilter[0];
 						
 			//If filterValue[0] is validated by validateFilterOrder then append WHERE clause in the query.
-			if (validateFilterOrderField(filterField)) {
+			if (validateField(filterField)) {
 				String filterValue = "";
 				
 				//To the query, strings must contains "", but numerics not.
@@ -56,13 +56,13 @@ public class ProductRepositoryImpl implements ProductCustomRepository {
 					if (filterField.equals("price") || filterField.equals("stock")) {
 						filterValue = rawFilter[1] + " ";
 					} else {
-						filterValue = "'" + rawFilter[1]+"' ";
+						filterValue = " '" + rawFilter[1]+"' ";
 					}					
 				}
 				
 				//Even if filter field is a valid field, field value can be empty. In this case the filter wont be applied.
 				if (!filterValue.isEmpty()) {
-					filterStatement = "and " + filterField + " = " + filterValue;
+					filterStatement = " and " + filterField + " = " + filterValue + " ";
 				}
 				
 				query.append(filterStatement);
@@ -85,7 +85,7 @@ public class ProductRepositoryImpl implements ProductCustomRepository {
 			String[] rawOrder = order.split(":");
 			String orderField = rawOrder[0];
 			
-			if (validateFilterOrderField(orderField)) {
+			if (validateField(orderField)) {
 				String orderAscDesc = "";
 				
 				//To the query, strings must contains "", but numerics not.
@@ -109,13 +109,13 @@ public class ProductRepositoryImpl implements ProductCustomRepository {
 		return query.toString();
 	}
 	
-	/**
-	 * This method validates if filterOrder parameter corresponds to a Product's field.
-	 * @param filterOrderField must be one value that is in the array PRODUCT_FIELDS.
-	 * @return true if filterOrder is one Product's field and false if not.
-	 */
-	private boolean validateFilterOrderField(String filterOrderField) {
-		return Arrays.asList(PRODUCT_FIELDS).contains(filterOrderField.toLowerCase());
+	@Override
+	public boolean validateField(String field) {
+		if (field == null) {
+			return true;
+		}
+		
+		return Arrays.asList(PRODUCT_FIELDS).contains(field.toLowerCase());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -132,7 +132,13 @@ public class ProductRepositoryImpl implements ProductCustomRepository {
 	@Override
 	public List<Product> findProducts(String groupTitle, String groupDescription, String filter, String order) {
 		//Create query to return the list of products filtered and ordered
-		String groupFilterQueryString = prepareQuery(filter, order, null, "and " + groupTitle + " = '" + groupDescription + "'");
+		String groupFilterQueryString = "";
+		
+		if (groupDescription != null) {
+			groupFilterQueryString = prepareQuery(filter, order, null, " and " + groupTitle + " = '" + groupDescription + "' ");
+		} else {
+			groupFilterQueryString = prepareQuery(filter, order, null, " and " + groupTitle + " is null ");
+		}
 		
 		Query groupFilterQuery = entityManager.createQuery(groupFilterQueryString);
 		

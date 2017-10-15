@@ -7,5 +7,7 @@ import com.organizeprodutsapi.product.Product;
 
 @Transactional(readOnly=true)
 public interface ProductRepository extends JpaRepository<Product, String>, ProductCustomRepository {
+
+	Product findById(String id);
 	
 }

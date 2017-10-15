@@ -1,31 +1,38 @@
 package com.organizeprodutsapi;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.organizeprodutsapi.dto.GroupResult;
+import com.organizeprodutsapi.jersey.JerseyClient;
 import com.organizeprodutsapi.product.Product;
 import com.organizeprodutsapi.service.ProductService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ProductServiceTest {
+public class IntegrationTest {
 
 	private List<Product> products = new ArrayList<Product>();
 
 	@Autowired
 	private ProductService service;
+	
+	private JerseyClient client = new JerseyClient();
+	
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 
 	@Before
 	public void setUp() throws Exception {
@@ -50,6 +57,10 @@ public class ProductServiceTest {
 		products.add(product7);
 		products.add(product8);
 		products.add(product9);
+
+		for (Product product : products) {
+			service.save(product);
+		}
 	}
 
 	/**
@@ -61,14 +72,36 @@ public class ProductServiceTest {
 	public void tearDown() throws Exception {
 		service.deleteAll();
 	}
+	
+	/**
+	 * Test invalid request filter param.
+	 */
+	@Test
+	public void testIntegrationOrganizeInvalidFilterParams() throws Exception {
+		expectedEx.expect(RuntimeException.class);
+	    expectedEx.expectMessage("400: request failed!");
+		
+		client.organize(products, "aaa", null).getData();
+	}
+	
+	/**
+	 * Test invalid request order param.
+	 */
+	@Test
+	public void testIntegrationOrganizeInvalidOrderParam() throws Exception{
+		expectedEx.expect(RuntimeException.class);
+	    expectedEx.expectMessage("400: request failed!");
+		
+		client.organize(products, null, "aaaa").getData();
+	}
 
 	/**
 	 * Test organize behavior with no filter and no order. This behavior must result
 	 * in a default order and no filter.
 	 */
 	@Test
-	public void testServiceOrganizeNoFilterNoOrder() {
-		List<GroupResult> organizedProducts = service.organize(products, null, null);
+	public void testIntegrationOrganizeNoFilterNoOrder() {
+		List<GroupResult> organizedProducts = client.organize(products, null, null).getData();
 
 		// Validate products of the first group
 		assertEquals("Controle XBOX One", organizedProducts.get(0).getDescription());
@@ -95,13 +128,13 @@ public class ProductServiceTest {
 		assertEquals("trek", organizedProducts.get(5).getDescription());
 		assertEquals(6, organizedProducts.size());
 	}
-
+	
 	/**
 	 * Test organize behavior with no filter.
 	 */
 	@Test
-	public void testServiceOrganizeNoFilter() {
-		List<GroupResult> organizedProducts = service.organize(products, null, "price:asc");
+	public void testIntegrationOrganizeNoFilter() {
+		List<GroupResult> organizedProducts = client.organize(products, null, "price:asc").getData();
 
 		// Validate products of the first group
 		assertEquals("Controle XBOX One", organizedProducts.get(0).getDescription());
@@ -134,8 +167,8 @@ public class ProductServiceTest {
 	 * Test organize behavior with no order.
 	 */
 	@Test
-	public void testServiceOrganizeNoOrder() {
-		List<GroupResult> organizedProducts = service.organize(products, "title:Controle XBOX One", null);
+	public void testIntegrationOrganizeNoOrder() {
+		List<GroupResult> organizedProducts = client.organize(products, "title:Controle XBOX One", null).getData();
 
 		// Validate products of the first group
 		assertEquals("Controle XBOX One", organizedProducts.get(0).getDescription());
@@ -163,8 +196,8 @@ public class ProductServiceTest {
 	 * Test organize behavior with filter and order.
 	 */
 	@Test
-	public void testServiceOrganizeWithFilterAndOrder() {
-		List<GroupResult> organizedProducts = service.organize(products, "title:XBOX One", "brand:desc");
+	public void testIntegrationOrganizeWithFilterAndOrder() {
+		List<GroupResult> organizedProducts = client.organize(products, "title:XBOX One", "brand:desc").getData();
 
 		// Validate products of the first group
 		assertEquals("XBOX One", organizedProducts.get(0).getDescription());
@@ -188,62 +221,4 @@ public class ProductServiceTest {
 		assertEquals(4, organizedProducts.size());
 	}
 
-	/**
-	 * Test organize behavior with invalid order field.
-	 */
-	@Test(expected = RuntimeException.class)
-	public void testServiceOrganizerWithInvalidOrderField() {
-		service.organize(products, "stock:0", "abc:asc");
-	}
-
-	/**
-	 * Test organize behavior with invalid filter field.
-	 */
-	@Test(expected = RuntimeException.class)
-	public void testServiceOrganizerWithInvalidFilterField() {
-		service.organize(products, "abc:0", "price:asc");
-	}
-	
-	/**
-	 * Test save product.
-	 */
-	@Test
-	public void testServiceSaveProduct() {
-		Product product = new Product("zzz", "7898100848355", "XBOX One", "nikana", 1300.00, 30L);
-		Product savedProduct = service.save(product);
-		
-		assertEquals(savedProduct.getId(), product.getId());
-	}
-	
-	/**
-	 * Test find product by id.
-	 */
-	@Test
-	public void testServiceFindProductById() {
-		Product product = new Product("zzz", "7898100848355", "XBOX One", "nikana", 1300.00, 30L);
-		service.save(product);
-		Product savedProduct = service.findById(product.getId());
-		
-		assertEquals(savedProduct.getId(), product.getId());
-		
-		service.deleteAll();
-	}
-	
-	/**
-	 * Test delete all products.
-	 */
-	@Test
-	public void testServiceDeleteAllProducts() {
-		Product product = new Product("zzz", "7898100848355", "XBOX One", "nikana", 1300.00, 30L);
-		Product savedProduct = service.save(product);
-		
-		assertEquals(savedProduct.getId(), product.getId());
-		
-		service.deleteAll();
-		
-		savedProduct = service.findById(savedProduct.getId());
-		
-		assertNull(savedProduct);
-	}
-	
 }

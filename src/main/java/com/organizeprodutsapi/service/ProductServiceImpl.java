@@ -1,4 +1,4 @@
-package com.organizeprodutsapi.service.impl;
+package com.organizeprodutsapi.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.organizeprodutsapi.dto.GroupResult;
 import com.organizeprodutsapi.product.Product;
 import com.organizeprodutsapi.repository.ProductRepository;
-import com.organizeprodutsapi.service.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -17,14 +16,6 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductRepository repository;
 	
-	/**
-	 * This method organizes a list of products according to the filter and order specified.
-	 * @param unorganizedProducts The unorganized list of products to be organized.
-	 * @param filter The filter to be applied to the unorganized list of products.
-	 * @param order The order to be applied to the unorganized list of products.
-	 * @return The list of products organized according to the filter and order. 
-	 * If no order is specified, the default order is applied: order by stock desc, price asc
-	 */
 	@Override
 	public List<GroupResult> organize(List<Product> unorganizedProducts, String filter, String order) {
 		List<GroupResult> groupResults = new ArrayList<GroupResult>();
@@ -68,6 +59,36 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 		
+	}
+
+	@Override
+	public Product save(Product product) {
+		return repository.save(product);
+		
+	}
+
+	@Override
+	public void deleteAll() {
+		repository.deleteAll();
+		
+	}
+
+	@Override
+	public Product findById(String id) {
+		return repository.findById(id);
+	}
+
+	@Override
+	public boolean validateFields(String[] fields) {
+		boolean allValidated = true;
+		
+		for (String field: fields) {
+			if (field != null && !repository.validateField(field.split(":")[0])) {
+				allValidated = false;
+			}
+		}
+		
+		return allValidated;
 	}
 
 }

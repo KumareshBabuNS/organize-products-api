@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Product carries product information. 
+ * Product objects carry product information. 
  * @author Danilo
  *
  */
