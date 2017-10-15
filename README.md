@@ -13,7 +13,7 @@ java -jar organize-products-api-1.0.jar
 
 Access the endpoint through this URL:
 
-`https://localhost:8080/organize-products-api/v1/products/organize`
+`http://localhost:8080/organize-products-api/v1/products/organize`
 
 **Method**
 
