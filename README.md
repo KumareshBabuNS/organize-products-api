@@ -19,6 +19,11 @@ Access the endpoint through this URL:
 
 `POST`
 
+**Headers**
+
+`Content-type:application/json`<br>
+`Accept:application/json`
+
 **Params**
 
 * `filter`: Filter to apply to the given list. The format must be field:value. <br>
