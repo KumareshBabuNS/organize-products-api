@@ -15,5 +15,3 @@ Access the endpoint through [this URL](https://localhost:8080/organize-products-
 
 ## Heroku Endpoint
 The API is available on [Heroku Cloud](https://ancient-gorge-51255.herokuapp.com/organize-products-api/v1/products/organize).
-
-

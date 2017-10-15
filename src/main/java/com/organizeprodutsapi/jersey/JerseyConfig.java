@@ -11,5 +11,5 @@ public class JerseyConfig extends ResourceConfig{
 	public JerseyConfig() {
 		register(ProductResource.class);
 	}
-
+	
 }
