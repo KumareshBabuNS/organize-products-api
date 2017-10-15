@@ -1,5 +1,5 @@
-# organize-products-api
-API to organize products.
+# Organize Products API
+This API organizes products given in JSON format according to filter order specified as parameter.
 
 ## Local Endpoint
 To run the application on a local environment, download jar file [here](organize-products-api-1.0.jar) and execute the command below:
@@ -80,3 +80,7 @@ Access the endpoint through this URL:
 
 ## Heroku Endpoint
 The API is available on [Heroku Cloud](https://ancient-gorge-51255.herokuapp.com/organize-products-api/v1/products/organize) for tests purpose.
+
+## Note about Integration Tests
+Integration tests requires that resource is available on `http://localhost:8080/organize-products-api/v1/products/organize`.
+Make sure the application is running before execute JUnit tests.
