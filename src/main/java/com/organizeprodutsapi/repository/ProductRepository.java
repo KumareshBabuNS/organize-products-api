@@ -6,6 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.organizeprodutsapi.product.Product;
 
 @Transactional(readOnly=true)
-public interface ProductRepository extends JpaRepository<Product, String> {
+public interface ProductRepository extends JpaRepository<Product, String>, ProductCustomRepository {
 	
 }
