@@ -1,5 +1,5 @@
 # Organize Products API
-This API organizes products given in JSON format according to filter order specified as parameter.
+This API organizes products given in JSON format according to filter and/or order specified as parameter.
 
 ## Local Endpoint
 To run the application on a local environment, download jar file [here](organize-products-api-1.0.jar) and execute the command below:
