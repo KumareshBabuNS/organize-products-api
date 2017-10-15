@@ -76,7 +76,7 @@ Access the endpoint through this URL:
 	 ]
 	}
 	```
-
+* `400`: Param filter and/or order_by are invalid.
 
 ## Heroku Endpoint
 The API is available on [Heroku Cloud](https://ancient-gorge-51255.herokuapp.com/organize-products-api/v1/products/organize) for tests purpose.
