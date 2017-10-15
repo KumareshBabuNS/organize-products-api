@@ -21,7 +21,6 @@ public class ProductServiceImpl implements ProductService {
 	
 	private static final String[] PRODUCT_FIELDS = {"id","ean","title","brand","price","stock"};
 	private static final String DEFAULT_QUERY_ORDER = "order by stock desc, price asc";
-	//private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 	
 	@PersistenceContext
     private EntityManager entityManager;
