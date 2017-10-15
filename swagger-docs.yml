@@ -42,8 +42,6 @@ paths:
           items:
             $ref: "#/definitions/Product"
       responses:
-        405:
-          description: "Invalid input"
         200:
           description: "An organized list of products."
           schema:
