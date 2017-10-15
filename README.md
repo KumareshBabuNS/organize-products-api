@@ -2,7 +2,7 @@
 API to organize products.
 
 ## Local Endpoint
-To run the application on a local environment, execute the command below:
+To run the application on a local environment, download jar file [here](/dist/organize-products-api-1.0.jar) and execute the command below:
 
 ```
 cd \<folder-with-the-jar-file>
